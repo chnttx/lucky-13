@@ -88,6 +88,8 @@ public class LuckyThirdteen extends CardGame {
     private final int trickWidth = 40;
     private static final int THIRTEEN_GOAL = 13;
     private final Deck deck = new Deck(Suit.values(), Rank.values(), "cover");
+//    private final List<Player> players = new ArrayList<>();
+    private final Player[] players = new Player[nbPlayers];
     private final Location[] handLocations = {
             new Location(350, 625),
             new Location(75, 350),
@@ -117,6 +119,8 @@ public class LuckyThirdteen extends CardGame {
     private boolean isAuto = false;
     private Hand playingArea;
     private Hand pack;
+
+    private PlayerFactory playerFactory;
 
     Font bigFont = new Font("Arial", Font.BOLD, 36);
 
@@ -237,6 +241,7 @@ public class LuckyThirdteen extends CardGame {
             hands[i] = new Hand(deck);
         }
         playingArea = new Hand(deck);
+        createPlayers();
         dealingOut(hands, nbPlayers, nbStartCards, nbFaceUpCards);
         playingArea.setView(this, new RowLayout(trickLocation, (playingArea.getNumberOfCards() + 2) * trickWidth));
         playingArea.draw();
@@ -386,25 +391,46 @@ public class LuckyThirdteen extends CardGame {
     }
 
 
+    private void createPlayers() {
+        for (int i = 0; i < nbPlayers; i++) {
+            String playerMode = "players." + i;
+            players[i] = playerFactory.createPlayer(properties.getProperty(playerMode));
+        }
+    }
+
+    private void dealingCards(Player[] players, int nbPlayers, int nbCardsPerPlayer, int nbSharedCards) {
+        pack = deck.toHand(false);
+
+        // Get all public cards
+//        String initialShareKey = ""
+
+    }
     private void dealingOut(Hand[] hands, int nbPlayers, int nbCardsPerPlayer, int nbSharedCards) {
         pack = deck.toHand(false);
 
         String initialShareKey = "shared.initialcards";
         String initialShareValue = properties.getProperty(initialShareKey);
+//        System.out.println(initialShareValue);
         if (initialShareValue != null) {
             String[] initialCards = initialShareValue.split(",");
             for (String initialCard : initialCards) {
                 if (initialCard.length() <= 1) {
                     continue;
                 }
+//                System.out.println(initialCard);
                 Card card = getCardFromList(pack.getCardList(), initialCard);
                 if (card != null) {
+                    System.out.println("public card added: " + card.getRank().toString() + card.getSuit().toString() + "\n");
                     card.removeFromHand(true);
                     playingArea.insert(card, true);
                 }
             }
+
+//            System.out.println(playingArea.getCardList().toString());
         }
         int cardsToShare = nbSharedCards - playingArea.getNumberOfCards();
+//        System.out.println("cards in playing area: " + playingArea.getNumberOfCards() + "\n");
+//        System.out.println("cards to share: " + cardsToShare + "\n");
 
         for (int j = 0; j < cardsToShare; j++) {
             if (pack.isEmpty()) return;
@@ -637,6 +663,7 @@ public class LuckyThirdteen extends CardGame {
     public LuckyThirdteen(Properties properties) {
         super(700, 700, 30);
         this.properties = properties;
+        playerFactory = new PlayerFactory();
         isAuto = Boolean.parseBoolean(properties.getProperty("isAuto"));
         thinkingTime = Integer.parseInt(properties.getProperty("thinkingTime", "200"));
         delayTime = Integer.parseInt(properties.getProperty("delayTime", "50"));
