@@ -71,6 +71,7 @@ public class LuckyThirdteen extends CardGame {
     final String trumpImage[] = {"bigspade.gif", "bigheart.gif", "bigdiamond.gif", "bigclub.gif"};
 
     static public final int seed = 30008;
+//    static public final long seed = System.currentTimeMillis() / 1000L;
     static final Random random = new Random(seed);
     private Properties properties;
     private StringBuilder logResult = new StringBuilder();
@@ -120,7 +121,8 @@ public class LuckyThirdteen extends CardGame {
     private Hand playingArea;
     private Hand pack;
 
-    private PlayerFactory playerFactory;
+    private final PlayerFactory playerFactory = new PlayerFactory();
+    private final DrawManager drawManager = new DrawManager(this);
 
     Font bigFont = new Font("Arial", Font.BOLD, 36);
 
@@ -236,38 +238,41 @@ public class LuckyThirdteen extends CardGame {
     private Card selected;
 
     private void initGame() {
-        hands = new Hand[nbPlayers];
-        for (int i = 0; i < nbPlayers; i++) {
-            hands[i] = new Hand(deck);
-        }
+//        hands = new Hand[nbPlayers];
+//        for (int i = 0; i < nbPlayers; i++) {
+//            hands[i] = new Hand(deck);
+//        }
         playingArea = new Hand(deck);
-        createPlayers();
-        dealingOut(hands, nbPlayers, nbStartCards, nbFaceUpCards);
+//        createPlayers();
+        dealingOut(players, nbFaceUpCards, nbStartCards);
+//        dealingOut(hands, nbPlayers, nbStartCards, nbFaceUpCards);
         playingArea.setView(this, new RowLayout(trickLocation, (playingArea.getNumberOfCards() + 2) * trickWidth));
         playingArea.draw();
 
         for (int i = 0; i < nbPlayers; i++) {
-            hands[i].sort(Hand.SortType.SUITPRIORITY, false);
+//            hands[i].sort(Hand.SortType.SUITPRIORITY, false);
+            players[i].sortHand(Hand.SortType.SUITPRIORITY, false);
         }
         // Set up human player for interaction
-        CardListener cardListener = new CardAdapter()  // Human Player plays card
-        {
-            public void leftDoubleClicked(Card card) {
-                selected = card;
-                hands[0].setTouchEnabled(false);
-            }
-        };
-        hands[0].addCardListener(cardListener);
+//        CardListener cardListener = new CardAdapter()  // Human Player plays card
+//        {
+//            public void leftDoubleClicked(Card card) {
+//                selected = card;
+//                hands[0].setTouchEnabled(false);
+//            }
+//        };
+//        hands[0].addCardListener(cardListener);
         // graphics
-        RowLayout[] layouts = new RowLayout[nbPlayers];
-        for (int i = 0; i < nbPlayers; i++) {
-            layouts[i] = new RowLayout(handLocations[i], handWidth);
-            layouts[i].setRotationAngle(90 * i);
-            // layouts[i].setStepDelay(10);
-            hands[i].setView(this, layouts[i]);
-            hands[i].setTargetArea(new TargetArea(trickLocation));
-            hands[i].draw();
-        }
+//        RowLayout[] layouts = new RowLayout[nbPlayers];
+//        for (int i = 0; i < nbPlayers; i++) {
+//            layouts[i] = new RowLayout(handLocations[i], handWidth);
+//            layouts[i].setRotationAngle(90 * i);
+//            // layouts[i].setStepDelay(10);
+//            hands[i].setView(this, layouts[i]);
+//            hands[i].setTargetArea(new TargetArea(trickLocation));
+//            hands[i].draw();
+//        }
+        drawManager.drawHands(nbPlayers, players);
     }
 
 
@@ -391,47 +396,38 @@ public class LuckyThirdteen extends CardGame {
     }
 
 
+    // Create players with their initial hand
     private void createPlayers() {
         for (int i = 0; i < nbPlayers; i++) {
             String playerMode = "players." + i;
-            players[i] = playerFactory.createPlayer(properties.getProperty(playerMode));
+            players[i] = playerFactory.createPlayer(properties.getProperty(playerMode), deck);
+
+//            String playerInitial = "players. "/
         }
     }
 
-    private void dealingCards(Player[] players, int nbPlayers, int nbCardsPerPlayer, int nbSharedCards) {
-        pack = deck.toHand(false);
-
-        // Get all public cards
-//        String initialShareKey = ""
-
-    }
-    private void dealingOut(Hand[] hands, int nbPlayers, int nbCardsPerPlayer, int nbSharedCards) {
+    private void dealingOut(Player[] players, int nbSharedCards, int nbCardsPerPlayer) {
         pack = deck.toHand(false);
 
         String initialShareKey = "shared.initialcards";
         String initialShareValue = properties.getProperty(initialShareKey);
-//        System.out.println(initialShareValue);
+
         if (initialShareValue != null) {
             String[] initialCards = initialShareValue.split(",");
             for (String initialCard : initialCards) {
                 if (initialCard.length() <= 1) {
                     continue;
                 }
-//                System.out.println(initialCard);
                 Card card = getCardFromList(pack.getCardList(), initialCard);
                 if (card != null) {
-                    System.out.println("public card added: " + card.getRank().toString() + card.getSuit().toString() + "\n");
                     card.removeFromHand(true);
                     playingArea.insert(card, true);
                 }
             }
-
-//            System.out.println(playingArea.getCardList().toString());
         }
         int cardsToShare = nbSharedCards - playingArea.getNumberOfCards();
-//        System.out.println("cards in playing area: " + playingArea.getNumberOfCards() + "\n");
-//        System.out.println("cards to share: " + cardsToShare + "\n");
 
+        // If shared cards is not in properties, randomly draw 2 cards from the pile to use as our public cards
         for (int j = 0; j < cardsToShare; j++) {
             if (pack.isEmpty()) return;
             Card dealt = randomCard(pack.getCardList());
@@ -445,28 +441,30 @@ public class LuckyThirdteen extends CardGame {
             if (initialCardsValue == null) {
                 continue;
             }
+
             String[] initialCards = initialCardsValue.split(",");
             for (String initialCard: initialCards) {
-                if (initialCard.length() <= 1) {
-                    continue;
-                }
+                if (initialCard.length() <= 1) continue;
                 Card card = getCardFromList(pack.getCardList(), initialCard);
                 if (card != null) {
                     card.removeFromHand(false);
-                    hands[i].insert(card, false);
+                    players[i].addCard(card, false);
+//                    Enum<Suit> suit = card.getSuit();
+                    System.out.println("Card name: " + card.toString() + ", " +card.getSuitId());
                 }
             }
-        }
 
-        for (int i = 0; i < nbPlayers; i++) {
-            int cardsToDealt = nbCardsPerPlayer - hands[i].getNumberOfCards();
-            for (int j = 0; j < cardsToDealt; j++) {
+
+            int cardsDealtRandom = nbCardsPerPlayer - players[i].getCardCount();
+            for (int j = 0; j < cardsDealtRandom; j++) {
                 if (pack.isEmpty()) return;
                 Card dealt = randomCard(pack.getCardList());
                 dealt.removeFromHand(false);
-                hands[i].insert(dealt, false);
+                players[i].addCard(dealt, false);
             }
+
         }
+
     }
 
     private void dealACardToHand(Hand hand) {
@@ -590,7 +588,7 @@ public class LuckyThirdteen extends CardGame {
             }
 
             if (roundNumber > 4) {
-                calculateScoreEndOfRound();
+//                calculateScoreEndOfRound();
             }
             delay(delayTime);
         }
@@ -636,6 +634,7 @@ public class LuckyThirdteen extends CardGame {
         initScores();
         initScore();
         setupPlayerAutoMovements();
+        createPlayers();
         initGame();
         playGame();
 
@@ -663,7 +662,6 @@ public class LuckyThirdteen extends CardGame {
     public LuckyThirdteen(Properties properties) {
         super(700, 700, 30);
         this.properties = properties;
-        playerFactory = new PlayerFactory();
         isAuto = Boolean.parseBoolean(properties.getProperty("isAuto"));
         thinkingTime = Integer.parseInt(properties.getProperty("thinkingTime", "200"));
         delayTime = Integer.parseInt(properties.getProperty("delayTime", "50"));
