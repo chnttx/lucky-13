@@ -1,4 +1,4 @@
-public class SumRule1 implements SumRule {
+public class SumRule3 implements SumRule {
   @Override
   public boolean checkSum() {
     return false;
