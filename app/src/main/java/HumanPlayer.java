@@ -22,10 +22,18 @@ public class HumanPlayer extends Player implements DiscardPileObserver {
 
 
 
-  public void discard() {
+//  public void discard() {
+//    currentHand.setTouchEnabled(true);
+//    Card selected = null;
+//    while (null == selected) GameGrid.delay(600);
+//    selected.removeFromHand(true);
+//  }
+  public Card discard() {
     currentHand.setTouchEnabled(true);
-    Card selected = null;
+    selected = null;
     while (null == selected) GameGrid.delay(600);
-    selected.removeFromHand(true);
+    return selected;
   }
+
+//  public void playTurn(boolean isAuto)
 }

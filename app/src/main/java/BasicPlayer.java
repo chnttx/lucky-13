@@ -1,17 +1,14 @@
 import ch.aplu.jcardgame.*;
 import ch.aplu.jgamegrid.*;
 import java.util.*;
-//import LuckyThirdteen.*;
 public class BasicPlayer extends Player {
 
   public BasicPlayer(Deck deck) {
     super(deck);
   }
 
-  public void discard() {
-//    setStatusText("Player " + playerIdx + " thinking...");
-    Card minScoreCard = getMinimumCard();
-    minScoreCard.removeFromHand(true);
+  public Card discard() {
+    return getMinimumCard();
   }
 
   private Card getMinimumCard() {
@@ -19,8 +16,8 @@ public class BasicPlayer extends Player {
     int minScore = Integer.MAX_VALUE;
     Card minScoreCard = null;
     for (Card card: cardsInHand) {
-      LuckyThirdteen.Suit suit = (LuckyThirdteen.Suit) card.getSuit();
-      LuckyThirdteen.Rank rank = (LuckyThirdteen.Rank) card.getRank();
+      Suit suit = (Suit) card.getSuit();
+      Rank rank = (Rank) card.getRank();
       int currentScore = suit.getMultiplicationFactor() * rank.getScoreCardValue();
       if (currentScore < minScore) {
         minScoreCard = card;

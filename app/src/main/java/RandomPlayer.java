@@ -12,10 +12,7 @@ public class RandomPlayer extends Player implements DiscardPileObserver{
   }
 
   // Randomly removes a card from their hand and into the discard pile
-  public void discard() {
-//    draw()
-    Card selected = randomCard(currentHand.getCardList());
-    selected.removeFromHand(false);
-//    discardPile.insert(selected, false)
+  public Card discard() {
+    return randomCard(currentHand.getCardList());
   }
 }
