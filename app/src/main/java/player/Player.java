@@ -2,21 +2,25 @@ import java.util.*;
 
 import ch.aplu.jcardgame.*;
 import ch.aplu.jgamegrid.*;
+import lucky.LuckyThirdteen;
+
 public class Player {
     protected Hand currentHand;
     protected Card selected;
     protected Queue<String> autoMovements;
-//    protected DiscardPile discardPile;
-//    protected DiscardPile discardPile;
     private int score;
+    private boolean canSumTo13 = false;
     public Player(Deck deck) {
         this.currentHand = new Hand(deck);
 //        this.discardPile = DiscardPile.getInstance();
         this.score = 0;
     }
 
+    public static final int seed = 30008;
+    static final Random random = new Random(seed);
+
     // Common method to draw a card from the deck
-    public void drawACardToHand(Hand deck) {
+    private void drawACardToHand(Hand deck) {
         if (deck.isEmpty()) return;
         Card dealt = randomCard(deck.getCardList());
         dealt.removeFromHand(true);
@@ -34,9 +38,14 @@ public class Player {
     public int getCardCount() { return currentHand.getNumberOfCards(); }
     protected boolean isHandEmpty() { return currentHand.isEmpty(); }
     public int getScore() { return score; }
-    public void setScore(int scoreThisRound) { score += scoreThisRound; }
+    public void setScore(int scoreThisRound) { score = scoreThisRound; }
+    public void setCanSumTo13() {canSumTo13 = true; }
+    public boolean getCanSumTo13() {
+        return canSumTo13;
+    }
+
     protected Card randomCard(ArrayList<Card> list) {
-        int x = LuckyThirdteen.random.nextInt(list.size());
+        int x = random.nextInt(list.size());
         return list.get(x);
     }
 
@@ -47,31 +56,32 @@ public class Player {
     public void addToQueue(String[] autoMovement) {
         autoMovements = new LinkedList<>(Arrays.asList(autoMovement));
     }
-    public void playTurn(boolean isAuto, Hand pack) {
-        Card toDiscard = null;
+    public void playTurn(boolean isAuto, Hand pack, int thinkingTime, int delayTime) {
+//        System.out.println(pack.getNumberOfCards());
+        Card toDiscard;
         if (isAuto && !autoMovements.isEmpty()) {
             toDiscard = applyAutoMovement(pack, autoMovements.poll());
-            if (toDiscard != null) {
-                toDiscard.removeFromHand(true);
-            } else {
-                // getCard() would vary depending on type of player
+            GameGrid.delay(delayTime);
+            if (toDiscard == null) {
+                GameGrid.delay(thinkingTime);
                 toDiscard = discard();
-                toDiscard.removeFromHand(true);
-                DiscardPile.addCardToCardsPlayed(toDiscard);
+//                GameGrid.delay(600);
             }
-//            if (pack.isEmpty( )) ;
-//            String[] currentMove = autoMovements.poll().split("-");
-//            String cardDealtString = currentMove[0];
-//            Card dealt = getCardFromList(pack.getCardList(), cardDealtString);
-//            if (dealt != null) {
-//
-//            }
+
+            toDiscard.removeFromHand(true);
+            DiscardPile.addCardToCardsPlayed(toDiscard);
+//            GameGrid.delay()
+            toDiscard.setVerso(false);
+            GameGrid.delay(delayTime);
         } else {
             // Draw one card
             drawACardToHand(pack);
             toDiscard = discard();
+//            GameGrid.delay(delayTime);
             toDiscard.removeFromHand(true);
             DiscardPile.addCardToCardsPlayed(toDiscard);
+            toDiscard.setVerso(false);
+            GameGrid.delay(delayTime);
         }
     }
 
@@ -119,8 +129,7 @@ public class Player {
         Rank cardRank = getRankFromString(cardName);
         Suit cardSuit = getSuitFromString(cardName);
         for (Card card: cards) {
-            if (card.getSuit() == cardSuit
-                && card.getRank() == cardRank) {
+            if (card.getSuit() == cardSuit && card.getRank() == cardRank) {
                 return card;
             }
         }
@@ -128,6 +137,7 @@ public class Player {
         return null;
     }
 
-//    public void setStatus() {}
-//    public void humanPlayers
+    public String getStatusString(int playerIdx) {
+        return "Player " + playerIdx + " thinking...";
+    }
 }

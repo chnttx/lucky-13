@@ -1,5 +1,6 @@
 import ch.aplu.jcardgame.Card;
 import ch.aplu.jcardgame.Deck;
+import player.Player;
 
 public class CleverPlayer extends Player {
   public CleverPlayer(Deck deck) {

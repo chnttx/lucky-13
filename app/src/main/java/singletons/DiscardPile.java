@@ -15,17 +15,6 @@ public class DiscardPile {
         return instance;
     }
 
-    public List<Card> getCardsPlayed() { return cardsPlayed; }
+    public static List<Card> getCardsPlayed() { return cardsPlayed; }
     public static void addCardToCardsPlayed(Card card) { cardsPlayed.add(card); }
-//    private final List<DiscardPileObserver> players = new ArrayList<>();
-
-//    public void addCardToDiscardPile() {
-//        notifyObservers();
-//    }
-//
-//    private void notifyObservers() {
-//        for (DiscardPileObserver player: players) {
-//            player.update();
-//        }
-//    }
 }

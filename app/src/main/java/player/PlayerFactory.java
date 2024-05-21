@@ -1,7 +1,10 @@
 import ch.aplu.jcardgame.*;
+import player.BasicPlayer;
+import player.CleverPlayer;
+import player.Player;
+import player.RandomPlayer;
 //import ch.aplu.jcardgame.Hand;
 
-import java.util.Properties;
 
 public class PlayerFactory {
 

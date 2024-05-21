@@ -1,6 +1,5 @@
 import ch.aplu.jcardgame.*;
-
-import java.util.logging.*;
+import player.Player;
 
 public class RandomPlayer extends Player implements DiscardPileObserver{
 

@@ -1,10 +1,12 @@
 import ch.aplu.jcardgame.*;
 //import ch.aplu.jcardgame.RowLayout;
 import ch.aplu.jgamegrid.*;
+import player.Player;
+
 import java.awt.*;
 
 /* Class for drawing all objects */
-public class DrawManager {
+public class RenderManager {
 
   private final CardGame cardGame;
   private final int handWidth = 400, trickWidth = 40, fullAngle = 360;
@@ -26,14 +28,13 @@ public class DrawManager {
   private Actor[] scoreActors;
   private int nbPlayers;
   Font bigFont = new Font("Arial", Font.BOLD, 36);
-  public DrawManager(CardGame cardGame, int nbPlayers) {
+  public RenderManager(CardGame cardGame, int nbPlayers) {
     this.cardGame = cardGame;
     this.nbPlayers = nbPlayers;
     this.scoreActors = new Actor[nbPlayers];
   }
 
   public void drawHands(Player[] allPlayers) {
-//    RowLayout[] layouts = new RowLayout(handLocations[)
     RowLayout[] layouts = new RowLayout[nbPlayers];
     for (int i = 0; i < nbPlayers; i++) {
       layouts[i] = new RowLayout(handLocations[i], handWidth);
@@ -61,10 +62,13 @@ public class DrawManager {
     }
   }
 
-//  public void drawScores(int x) {
-//    GameGrid.addActor()
-//  }
+  public void drawPlayingArea() {
+    Hand publicArea = PublicCards.getPlayingArea();
+    publicArea.setView(cardGame, new RowLayout(trickLocation, (publicArea.getNumberOfCards() + 2) * trickWidth));
+    publicArea.draw();
+  }
 
-//  public void drawHands()
+//  public void drawActor()
+
 }
 

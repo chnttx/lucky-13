@@ -1,5 +1,6 @@
 import ch.aplu.jcardgame.*;
-import ch.aplu.jgamegrid.*;
+import player.Player;
+
 import java.util.*;
 public class BasicPlayer extends Player {
 
