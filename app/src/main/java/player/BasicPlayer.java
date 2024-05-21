@@ -1,4 +1,8 @@
+package player;
+
 import ch.aplu.jcardgame.*;
+import enums.Rank;
+import enums.Suit;
 import player.Player;
 
 import java.util.*;

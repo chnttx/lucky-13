@@ -1,3 +1,5 @@
+package player;
+
 import ch.aplu.jcardgame.Card;
 import ch.aplu.jcardgame.Deck;
 import player.Player;

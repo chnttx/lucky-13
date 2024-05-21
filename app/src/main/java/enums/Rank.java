@@ -1,3 +1,5 @@
+package enums;
+
 public enum Rank {
   // Reverse order of rank importance (see rankGreater() below)
   ACE (1, 1, 0, 1),

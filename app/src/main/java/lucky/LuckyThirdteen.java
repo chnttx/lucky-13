@@ -1,4 +1,4 @@
-// LuckyThirteen.java
+package lucky;// LuckyThirteen.java
 
 import ch.aplu.jcardgame.*;
 import ch.aplu.jgamegrid.*;
@@ -6,66 +6,15 @@ import ch.aplu.jgamegrid.*;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
+import player.*;
+import enums.*;
+import score.ScoreStrategy;
+import score.ScoreStrategyFactory;
+import singletons.*;
+import sum.*;
 
 @SuppressWarnings("serial")
 public class LuckyThirdteen extends CardGame {
-
-//    public enum Suit {
-//        SPADES ("S", 4), HEARTS ("H", 3),
-//        DIAMONDS ("D", 2), CLUBS ("C", 1);
-//        private String suitShortHand = "";
-//        private int multiplicationFactor = 1;
-//        public static final int PUBLIC_CARD_MULTIPLICATION_FACTOR = 2;
-//        Suit(String shortHand, int multiplicationFactor) {
-//            this.suitShortHand = shortHand;
-//            this.multiplicationFactor = multiplicationFactor;
-//        }
-//
-//        public String getSuitShortHand() {
-//            return suitShortHand;
-//        }
-//
-//        public int getMultiplicationFactor() {
-//            return multiplicationFactor;
-//        }
-//    }
-//
-//    public enum Rank {
-//        // Reverse order of rank importance (see rankGreater() below)
-//        ACE (1, 1, 0, 1),
-//        KING (13, 13, 10, 11, 12, 13),
-//        QUEEN (12, 12, 10, 11, 12, 13),
-//        JACK (11, 11, 10, 11, 12, 13),
-//        TEN (10, 10, 10), NINE (9, 9, 9),
-//        EIGHT (8, 8, 8), SEVEN (7, 7, 7),
-//        SIX (6, 6, 6), FIVE (5, 5, 5),
-//        FOUR (4, 4, 4), THREE (3, 3, 3),
-//        TWO (2, 2, 2);
-//
-//        private int rankCardValue = 1;
-//        private int scoreValue = 0;
-//        private int []possibleSumValues = null;
-//        Rank(int rankCardValue, int scoreValue, int... possibleSumValues) {
-//            this.rankCardValue = rankCardValue;
-//            this.scoreValue = scoreValue;
-//            this.possibleSumValues = possibleSumValues;
-//        }
-//
-//        public int getRankCardValue() {
-//            return rankCardValue;
-//        }
-//
-//        public int getScoreCardValue() { return scoreValue; }
-//
-//        public int[] getPossibleSumValues() {
-//            return possibleSumValues;
-//        }
-//
-//        public String getRankCardLog() {
-//            return String.format("%d", rankCardValue);
-//        }
-//    }
-
     final String trumpImage[] = {"bigspade.gif", "bigheart.gif", "bigdiamond.gif", "bigclub.gif"};
 
     static public final int seed = 30008;
@@ -75,7 +24,7 @@ public class LuckyThirdteen extends CardGame {
     private StringBuilder logResult = new StringBuilder();
     private List<List<String>> playerAutoMovements = new ArrayList<>();
     private SumRuleComposite sumRuleComposite = null;
-    private ScoreRuleFactory scoreRuleFactory = null;
+    private ScoreStrategyFactory scoreStrategyFactory = null;
 
     public boolean rankGreater(Card card1, Card card2) {
         return card1.getRankId() < card2.getRankId(); // Warning: Reverse rank order of cards (see comment on enum)
@@ -89,7 +38,7 @@ public class LuckyThirdteen extends CardGame {
     private final int trickWidth = 40;
     public static final int THIRTEEN_GOAL = 13;
     private final Deck deck = new Deck(Suit.values(), Rank.values(), "cover");
-//    private final List<Player> players = new ArrayList<>();
+//    private final List<player.Player> players = new ArrayList<>();
     private final Player[] players = new Player[nbPlayers];
 //    private final Location[] handLocations = {
 //            new Location(350, 625),
@@ -246,7 +195,7 @@ public class LuckyThirdteen extends CardGame {
             players[i].sortHand(Hand.SortType.SUITPRIORITY, false);
         }
         // Set up human player for interaction
-//        CardListener cardListener = new CardAdapter()  // Human Player plays card
+//        CardListener cardListener = new CardAdapter()  // Human player.Player plays card
 //        {
 //            public void leftDoubleClicked(Card card) {
 //                selected = card;
@@ -405,7 +354,7 @@ public class LuckyThirdteen extends CardGame {
 //        System.out.println(pack.getCardList().size());
         String initialShareKey = "shared.initialcards";
         String initialShareValue = properties.getProperty(initialShareKey);
-//        publicCards = PublicCards.getInstance();
+//        publicCards = singletons.PublicCards.getInstance();
         if (initialShareValue != null) {
             String[] initialCards = initialShareValue.split(",");
             for (String initialCard : initialCards) {
@@ -445,7 +394,7 @@ public class LuckyThirdteen extends CardGame {
                 if (card != null) {
                     card.removeFromHand(false);
                     players[i].addCard(card, false);
-//                    Enum<Suit> suit = card.getSuit();
+//                    Enum<enums.Suit> suit = card.getSuit();
 //                    System.out.println("Card name: " + card.toString() + ", " +card.getSuitId());
                 }
             }
@@ -528,12 +477,8 @@ public class LuckyThirdteen extends CardGame {
     public void updateScore(Player[] players) {
          int numberOfPlayersWith13 = sumRuleComposite.getAllPlayersWithSum13(players);
 
-//         System.out.println(playerIdxWithSum13.size());
-         ScoreStrategy scoreRule = scoreRuleFactory.getScoreRule(numberOfPlayersWith13);
-         scoreRule.applyScore(players);
-         for (int i = 0; i < nbPlayers; i++) {
-             System.out.println(players[i].getScore());
-         }
+         ScoreStrategy scoreStrategy = scoreStrategyFactory.getScoreRule(numberOfPlayersWith13);
+         scoreStrategy.applyScore(players);
     }
     private void playGame() {
         // End trump suit
@@ -579,14 +524,14 @@ public class LuckyThirdteen extends CardGame {
             if (!isAuto || finishedAuto) {
                 if (0 == nextPlayer) {
                     hands[0].setTouchEnabled(true);
-                    setStatusText("Player 0 is playing. Please double click on a card to discard");
+                    setStatusText("player.Player 0 is playing. Please double click on a card to discard");
 
                     selected = null;
                     dealACardToHand(hands[0]);
                     while (null == selected) delay(delayTime);
                     selected.removeFromHand(true);
                 } else {
-                    setStatusText("Player " + nextPlayer + " thinking...");
+                    setStatusText("player.Player " + nextPlayer + " thinking...");
                     selected = getRandomCard(hands[nextPlayer]);
                     selected.removeFromHand(true);
                 }
@@ -710,7 +655,7 @@ public class LuckyThirdteen extends CardGame {
         sumRuleComposite.addSumRule(new SumRule1());
         sumRuleComposite.addSumRule(new SumRule2());
         sumRuleComposite.addSumRule(new SumRule3());
-        scoreRuleFactory = new ScoreRuleFactory();
+        scoreStrategyFactory = new ScoreStrategyFactory();
     }
 
 }

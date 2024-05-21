@@ -1,8 +1,12 @@
+package player;
+
 import java.util.*;
 
 import ch.aplu.jcardgame.*;
 import ch.aplu.jgamegrid.*;
-import lucky.LuckyThirdteen;
+import enums.*;
+import singletons.*;
+//import singletons.DiscardPile.*;
 
 public class Player {
     protected Hand currentHand;
@@ -12,7 +16,7 @@ public class Player {
     private boolean canSumTo13 = false;
     public Player(Deck deck) {
         this.currentHand = new Hand(deck);
-//        this.discardPile = DiscardPile.getInstance();
+//        this.discardPile = singletons.DiscardPile.getInstance();
         this.score = 0;
     }
 
@@ -138,6 +142,6 @@ public class Player {
     }
 
     public String getStatusString(int playerIdx) {
-        return "Player " + playerIdx + " thinking...";
+        return "player.Player " + playerIdx + " thinking...";
     }
 }

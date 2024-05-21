@@ -1,8 +1,7 @@
+package player;
+
 import ch.aplu.jcardgame.*;
-import player.BasicPlayer;
-import player.CleverPlayer;
-import player.Player;
-import player.RandomPlayer;
+import player.*;
 //import ch.aplu.jcardgame.Hand;
 
 

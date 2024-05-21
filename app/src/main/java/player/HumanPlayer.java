@@ -1,9 +1,11 @@
+package player;
+
 import ch.aplu.jcardgame.*;
 import ch.aplu.jgamegrid.GameGrid;
 import player.Player;
 //import ch.aplu.jcardgame.CardListener;
 
-public class HumanPlayer extends Player implements DiscardPileObserver {
+public class HumanPlayer extends Player {
 
 //  private Card selected;
   public HumanPlayer(Deck deck) {
@@ -15,10 +17,6 @@ public class HumanPlayer extends Player implements DiscardPileObserver {
       }
     };
     currentHand.addCardListener(cardListener);
-  }
-  @Override
-  public void update() {
-
   }
 
 

@@ -1,7 +1,10 @@
+package lucky;
+
 import ch.aplu.jcardgame.*;
 //import ch.aplu.jcardgame.RowLayout;
 import ch.aplu.jgamegrid.*;
 import player.Player;
+import singletons.PublicCards;
 
 import java.awt.*;
 
