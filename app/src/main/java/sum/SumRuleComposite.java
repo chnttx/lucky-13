@@ -1,4 +1,7 @@
+package sum;
+
 import player.Player;
+import sum.SumRule;
 
 import java.util.*;
 

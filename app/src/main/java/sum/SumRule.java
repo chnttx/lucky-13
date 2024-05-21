@@ -1,3 +1,5 @@
+package sum;
+
 import player.Player;
 
 public interface SumRule {

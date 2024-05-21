@@ -1,6 +1,10 @@
+package sum;
+
 import java.util.*;
 import ch.aplu.jcardgame.Card;
 import player.Player;
+import sum.BaseSumRule;
+import sum.SumRule;
 
 /* Rule 1: Two private cards in their hand*/
 public class SumRule1 extends BaseSumRule implements SumRule {

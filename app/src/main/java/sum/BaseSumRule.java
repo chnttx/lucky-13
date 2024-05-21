@@ -1,3 +1,5 @@
+package sum;
+
 import ch.aplu.jcardgame.*;
 import enums.Rank;
 
