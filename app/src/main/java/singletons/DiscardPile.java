@@ -1,5 +1,7 @@
+package singletons;
+
 import ch.aplu.jcardgame.*;
-import ch.aplu.jgamegrid.*;
+
 import java.util.*;
 
 /* Our singleton object for handling discarded cards */

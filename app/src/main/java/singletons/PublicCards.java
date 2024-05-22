@@ -1,3 +1,5 @@
+package singletons;
+
 import ch.aplu.jcardgame.*;
 import java.util.*;
 
