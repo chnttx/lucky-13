@@ -22,15 +22,13 @@ public class SumRuleComposite implements SumRule {
   // false: player's hand does not sum to 13 in under any sum rule, true otherwise
   public int getAllPlayersWithSum13 (Player[] players) {
     int ans = 0;
-//    List<Integer> playerIdxWithSum13 = new ArrayList<>();
-    for (int i = 0; i < players.length; i++) {
-      if (checkSumEquals13(players[i])) {
-        players[i].setCanSumTo13();
+    for (Player player : players) {
+      if (checkSumEquals13(player)) {
+        player.setCanSumTo13();
         ans++;
       }
     }
     return ans;
-//    return playerIdxWithSum13;
   }
 
   public void addSumRule(SumRule sumRule) {

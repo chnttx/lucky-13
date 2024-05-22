@@ -16,15 +16,23 @@ public class SumRule3 extends BaseSumRule implements SumRule {
 
     List<Card> publicCards = PublicCards.getPublicCards();
     List<Card> privateCards = player.getCurrentHand().getCardList();
-    Rank rank1 = (Rank) publicCards.get(0).getRank(), rank2 = (Rank) publicCards.get(1).getRank(),
-        rank3 = (Rank) privateCards.get(0).getRank(), rank4 = (Rank) privateCards.get(1).getRank();
+    Card card1 = publicCards.get(0), card2 = publicCards.get(1), card3 = privateCards.get(0),
+        card4 = privateCards.get(1);
+    Rank rank1 = (Rank) card1.getRank(), rank2 = (Rank) card2.getRank(),
+        rank3 = (Rank) card3.getRank(), rank4 = (Rank) card4.getRank();
 
-    return isThirteenFromPossibleValues(rank1.getPossibleSumValues(), rank2.getPossibleSumValues(),
+    boolean canSumTo13 = isThirteenFromPossibleValues(rank1.getPossibleSumValues(), rank2.getPossibleSumValues(),
         rank3.getPossibleSumValues(), rank4.getPossibleSumValues());
+
+    if (canSumTo13) {
+      player.addCombination(Arrays.asList(card1, card2, card3, card4));
+    }
+
+    return canSumTo13;
   }
 
   // Better time complexity O(n^2) instead of O(n^4) with 4 nested loops
-  public boolean isThirteenFromPossibleValues(int[] possibleValues1, int[] possibleValues2,
+  private boolean isThirteenFromPossibleValues(int[] possibleValues1, int[] possibleValues2,
                                               int[] possibleValues3, int[] possibleValues4) {
     Set<Integer> sumSet1And2 = new HashSet<>();
     for (int v1 : possibleValues1) {
