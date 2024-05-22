@@ -71,6 +71,9 @@ public class RenderManager {
     publicArea.draw();
   }
 
+  public void drawEndGame() {
+    cardGame.addActor(new Actor("sprites/gameover.gif"), textLocation);
+  }
 //  public void drawActor()
 
 }
