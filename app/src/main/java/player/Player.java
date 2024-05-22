@@ -10,17 +10,17 @@ import singletons.*;
 
 public class Player {
     protected Hand currentHand;
-    protected Card selected;
-    protected Queue<String> autoMovements;
+    private Queue<String> autoMovements;
     private int score;
     private boolean canSumTo13 = false;
+    private final List<List<Card>> allCombinationWithSum13 = new ArrayList<>();
     public Player(Deck deck) {
         this.currentHand = new Hand(deck);
-//        this.discardPile = singletons.DiscardPile.getInstance();
         this.score = 0;
     }
 
     public static final int seed = 30008;
+//    public static final long seed = System.currentTimeMillis() / 1000L;
     static final Random random = new Random(seed);
 
     // Common method to draw a card from the deck
@@ -28,7 +28,6 @@ public class Player {
         if (deck.isEmpty()) return;
         Card dealt = randomCard(deck.getCardList());
         dealt.removeFromHand(true);
-//        addCard(dealt, true);
         currentHand.insert(dealt, true);
     }
 
@@ -36,8 +35,6 @@ public class Player {
     public void addCard(Card card, boolean doDraw) {
         currentHand.insert(card, doDraw);
     }
-//    public ArrayList<Card> getCurrentHand() { return currentHand.getCardList(); }
-
     public Hand getCurrentHand() { return currentHand; }
     public int getCardCount() { return currentHand.getNumberOfCards(); }
     protected boolean isHandEmpty() { return currentHand.isEmpty(); }
@@ -47,7 +44,6 @@ public class Player {
     public boolean getCanSumTo13() {
         return canSumTo13;
     }
-
     protected Card randomCard(ArrayList<Card> list) {
         int x = random.nextInt(list.size());
         return list.get(x);
@@ -56,12 +52,10 @@ public class Player {
     public void sortHand(Hand.SortType sortType, boolean doDraw) {
         currentHand.sort(sortType, doDraw);
     }
-
     public void addToQueue(String[] autoMovement) {
         autoMovements = new LinkedList<>(Arrays.asList(autoMovement));
     }
     public void playTurn(boolean isAuto, Hand pack, int thinkingTime, int delayTime) {
-//        System.out.println(pack.getNumberOfCards());
         Card toDiscard;
         if (isAuto && !autoMovements.isEmpty()) {
             toDiscard = applyAutoMovement(pack, autoMovements.poll());
@@ -69,27 +63,23 @@ public class Player {
             if (toDiscard == null) {
                 GameGrid.delay(thinkingTime);
                 toDiscard = discard();
-//                GameGrid.delay(600);
             }
 
             toDiscard.removeFromHand(true);
             DiscardPile.addCardToCardsPlayed(toDiscard);
-//            GameGrid.delay()
             toDiscard.setVerso(false);
             GameGrid.delay(delayTime);
         } else {
             // Draw one card
             drawACardToHand(pack);
             toDiscard = discard();
-//            GameGrid.delay(delayTime);
             toDiscard.removeFromHand(true);
             DiscardPile.addCardToCardsPlayed(toDiscard);
             toDiscard.setVerso(false);
-            GameGrid.delay(delayTime);
+            GameGrid.delay(delayTime * 2L);
         }
     }
 
-//    protected void
     private Card applyAutoMovement(Hand pack, String nextMovement) {
         String[] cardStrings = nextMovement.split("-");
         String cardDealtString = cardStrings[0];
@@ -142,6 +132,14 @@ public class Player {
     }
 
     public String getStatusString(int playerIdx) {
-        return "player.Player " + playerIdx + " thinking...";
+        return "Player " + playerIdx + " thinking...";
     }
+
+    public void addCombination(List<Card> cards) {
+        allCombinationWithSum13.add(cards);
+    }
+
+    public List<List<Card>> getAllCombinationWithSum13() { return allCombinationWithSum13; }
+
+    public boolean isCardInHand(Card card) { return currentHand.contains(card);}
 }
