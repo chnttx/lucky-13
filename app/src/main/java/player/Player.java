@@ -24,9 +24,9 @@ public class Player {
     static final Random random = new Random(seed);
 
     // Common method to draw a card from the deck
-    private void drawACardToHand(Hand deck) {
-        if (deck.isEmpty()) return;
-        Card dealt = randomCard(deck.getCardList());
+    private void drawCard(Hand pack) {
+        if (pack.isEmpty()) return;
+        Card dealt = randomCard(pack.getCardList());
         dealt.removeFromHand(true);
         currentHand.insert(dealt, true);
     }
@@ -37,7 +37,6 @@ public class Player {
     }
     public Hand getCurrentHand() { return currentHand; }
     public int getCardCount() { return currentHand.getNumberOfCards(); }
-    protected boolean isHandEmpty() { return currentHand.isEmpty(); }
     public int getScore() { return score; }
     public void setScore(int scoreThisRound) { score = scoreThisRound; }
     public void setCanSumTo13() {canSumTo13 = true; }
@@ -71,7 +70,7 @@ public class Player {
             GameGrid.delay(delayTime);
         } else {
             // Draw one card
-            drawACardToHand(pack);
+            drawCard(pack);
             toDiscard = discard();
             toDiscard.removeFromHand(true);
             DiscardPile.addCardToCardsPlayed(toDiscard);

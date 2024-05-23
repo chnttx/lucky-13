@@ -7,16 +7,6 @@ import enums.Rank;
 
 public abstract class BaseSumRule implements SumRule {
   protected final int THIRTEEN_GOAL = 13;
-//  protected int getScorePrivateCard(Card card) {
-//    enums.Rank rank = (enums.Rank) card.getRank();
-//    enums.Suit suit = (enums.Suit) card.getSuit();
-//
-//    return rank.getScoreCardValue() * suit.getMultiplicationFactor();
-//  }
-//  protected int getScorePublicCard(Card card) {
-//    enums.Rank rank = (enums.Rank) card.getRank();
-//    return rank.getScoreCardValue() * enums.Suit.PUBLIC_CARD_MULTIPLICATION_FACTOR;
-//  }
 
   protected boolean isThirteenCards(Card card1, Card card2) {
     Rank rank1 = (Rank) card1.getRank();

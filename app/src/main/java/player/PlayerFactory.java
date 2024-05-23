@@ -6,7 +6,17 @@ import player.*;
 
 
 public class PlayerFactory {
+  private static PlayerFactory instance;
+  private PlayerFactory() {}
 
+  public static PlayerFactory getInstance() {
+    if (instance == null) {
+      instance = new PlayerFactory();
+    }
+    return instance;
+  }
+
+  // Method to create players
   public Player createPlayer(String type, Deck deck) {
     Player player;
 
@@ -16,9 +26,10 @@ public class PlayerFactory {
       case "clever" -> player = new CleverPlayer(deck);
       case "human" -> player = new HumanPlayer(deck);
       default -> {
-        player = null;
+        player = new RandomPlayer(deck);
       }
     }
     return player;
   }
 }
+

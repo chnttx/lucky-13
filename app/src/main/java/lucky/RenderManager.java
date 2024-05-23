@@ -8,9 +8,8 @@ import singletons.PublicCards;
 
 import java.awt.*;
 
-/* Class for drawing all objects */
+/* Class for rendering all objects (players' hands, scores) */
 public class RenderManager {
-
   private final CardGame cardGame;
   private final int handWidth = 400, trickWidth = 40, fullAngle = 360;
   private final Location[] handLocations = {
@@ -37,7 +36,7 @@ public class RenderManager {
     this.scoreActors = new Actor[nbPlayers];
   }
 
-  public void drawHands(Player[] allPlayers) {
+  public void renderHands(Player[] allPlayers) {
     RowLayout[] layouts = new RowLayout[nbPlayers];
     for (int i = 0; i < nbPlayers; i++) {
       layouts[i] = new RowLayout(handLocations[i], handWidth);
@@ -50,7 +49,8 @@ public class RenderManager {
 
   }
 
-  public void drawInitialScore(int playerIdx, Player[] allPlayers) {
+
+  public void renderInitialScore(int playerIdx, Player[] allPlayers) {
       String text = "[" + Math.max(allPlayers[playerIdx].getScore(), 0) + "]";
       scoreActors[playerIdx] = new TextActor(text, Color.WHITE, cardGame.bgColor, bigFont);
       cardGame.addActor(scoreActors[playerIdx], scoreLocations[playerIdx]);
@@ -65,16 +65,15 @@ public class RenderManager {
     }
   }
 
-  public void drawPlayingArea() {
+  public void renderPlayingArea() {
     Hand publicArea = PublicCards.getPlayingArea();
     publicArea.setView(cardGame, new RowLayout(trickLocation, (publicArea.getNumberOfCards() + 2) * trickWidth));
     publicArea.draw();
   }
 
-  public void drawEndGame() {
+  public void renderEndGame() {
     cardGame.addActor(new Actor("sprites/gameover.gif"), textLocation);
   }
-//  public void drawActor()
 
 }
 
