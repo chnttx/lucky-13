@@ -21,7 +21,6 @@ public class LuckyThirdteen extends CardGame {
     private Properties properties;
     private StringBuilder logResult = new StringBuilder();
     private SumRule sumRuleComposite = null;
-    private ScoreStrategyFactory scoreStrategyFactory = null;
 
     public boolean rankGreater(Card card1, Card card2) {
         return card1.getRankId() < card2.getRankId(); // Warning: Reverse rank order of cards (see comment on enum)
@@ -37,7 +36,7 @@ public class LuckyThirdteen extends CardGame {
     private int delayTime = 600;
     private boolean isAuto = false;
     private Hand pack;
-    private PublicCards publicCards;
+    private PlayingArea publicCards;
     private final RenderManager renderManager = new RenderManager(this, nbPlayers);
 
     private void initGame() {
@@ -124,18 +123,18 @@ public class LuckyThirdteen extends CardGame {
                 Card card = getCardFromList(pack.getCardList(), initialCard);
                 if (card != null) {
                     card.removeFromHand(true);
-                    PublicCards.addCardToHand(card);
+                    PlayingArea.addCardToPlayingArea(card);
                 }
             }
         }
-        int cardsToShare = 2 - PublicCards.getPublicCards().size();
+        int cardsToShare = 2 - PlayingArea.getPublicCards().size();
 
         // If shared cards is not in properties, randomly draw 2 cards from the pile to use as our public cards
         for (int j = 0; j < cardsToShare; j++) {
             if (pack.isEmpty()) return;
             Card dealt = randomCard(pack.getCardList());
             dealt.removeFromHand(true);
-            PublicCards.addCardToHand(dealt);
+            PlayingArea.addCardToPlayingArea(dealt);
         }
 
         for (int i = 0; i < nbPlayers; i++) {
@@ -206,7 +205,7 @@ public class LuckyThirdteen extends CardGame {
         logResult.append("Winners:" + String.join(", ", winners.stream().map(String::valueOf).collect(Collectors.toList())));
     }
     private void play() {
-        renderManager.updateScore(players);
+        renderManager.renderScore(players);
         delay(delayTime);
         for (int i = 1; i <= 4; i++) {
             addRoundInfoToLog(i);
@@ -220,7 +219,7 @@ public class LuckyThirdteen extends CardGame {
             delay(delayTime);
         }
         calculateScore(players);
-        renderManager.updateScore(players);
+        renderManager.renderScore(players);
     }
 
     public void calculateScore(Player[] players) {
@@ -228,9 +227,8 @@ public class LuckyThirdteen extends CardGame {
          for (Player player: players) {
              numberOfPlayersWithSum13 += (sumRuleComposite.checkSumEquals13(player)) ? 1 : 0;
          }
-         System.out.println(numberOfPlayersWithSum13);
-         ScoreStrategy scoreStrategy = scoreStrategyFactory.getScoreRule(numberOfPlayersWithSum13);
-         System.out.println(scoreStrategy.getClass());
+         ScoreStrategyFactory scoreStrategyFactory = ScoreStrategyFactory.getInstance();
+         ScoreStrategy scoreStrategy = scoreStrategyFactory.getScoreStrategy(numberOfPlayersWithSum13);
          scoreStrategy.applyScore(players);
     }
 
@@ -276,9 +274,8 @@ public class LuckyThirdteen extends CardGame {
         isAuto = Boolean.parseBoolean(properties.getProperty("isAuto"));
         thinkingTime = Integer.parseInt(properties.getProperty("thinkingTime", "200"));
         delayTime = Integer.parseInt(properties.getProperty("delayTime", "50"));
-        publicCards = PublicCards.getInstance(deck);
+        publicCards = PlayingArea.getInstance(deck);
         sumRuleComposite = new SumRuleComposite();
-        scoreStrategyFactory = new ScoreStrategyFactory();
     }
 
 }

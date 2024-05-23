@@ -3,14 +3,12 @@ package player;
 import ch.aplu.jcardgame.Card;
 import ch.aplu.jcardgame.Deck;
 import enums.Rank;
-import player.Player;
 import singletons.DiscardPile;
-import singletons.PublicCards;
+import singletons.PlayingArea;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class CleverPlayer extends Player {
@@ -20,7 +18,7 @@ public class CleverPlayer extends Player {
   @Override
   public Card discard() {
     List<Card> cardsInHand = getCurrentHand().getCardList(),
-        publicCards = PublicCards.getPublicCards(), cardsPlayed = DiscardPile.getCardsPlayed();
+        publicCards = PlayingArea.getPublicCards(), cardsPlayed = DiscardPile.getCardsPlayed();
 
     List<Card> allCardsVisible = Stream.concat(Stream.concat(cardsInHand.stream(), publicCards.stream()),
         cardsPlayed.stream()).toList();

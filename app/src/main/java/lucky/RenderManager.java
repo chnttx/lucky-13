@@ -4,7 +4,7 @@ import ch.aplu.jcardgame.*;
 //import ch.aplu.jcardgame.RowLayout;
 import ch.aplu.jgamegrid.*;
 import player.Player;
-import singletons.PublicCards;
+import singletons.PlayingArea;
 
 import java.awt.*;
 
@@ -56,7 +56,7 @@ public class RenderManager {
       cardGame.addActor(scoreActors[playerIdx], scoreLocations[playerIdx]);
   }
 
-  public void updateScore(Player[] allPlayers) {
+  public void renderScore(Player[] allPlayers) {
     for (int i = 0; i < nbPlayers; i++) {
       cardGame.removeActor(scoreActors[i]);
       String text = "P" + i + "[" + Math.max(allPlayers[i].getScore(), 0) + "]";
@@ -66,7 +66,7 @@ public class RenderManager {
   }
 
   public void renderPlayingArea() {
-    Hand publicArea = PublicCards.getPlayingArea();
+    Hand publicArea = PlayingArea.getPlayingArea();
     publicArea.setView(cardGame, new RowLayout(trickLocation, (publicArea.getNumberOfCards() + 2) * trickWidth));
     publicArea.draw();
   }

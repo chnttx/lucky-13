@@ -3,9 +3,7 @@ package sum;
 import ch.aplu.jcardgame.Card;
 import enums.Rank;
 import player.Player;
-import singletons.PublicCards;
-import sum.BaseSumRule;
-import sum.SumRule;
+import singletons.PlayingArea;
 
 import java.util.*;
 
@@ -14,7 +12,7 @@ public class SumRule3 extends BaseSumRule implements SumRule {
   @Override
   public boolean checkSumEquals13(Player player) {
 
-    List<Card> publicCards = PublicCards.getPublicCards();
+    List<Card> publicCards = PlayingArea.getPublicCards();
     List<Card> privateCards = player.getCurrentHand().getCardList();
     Card card1 = publicCards.get(0), card2 = publicCards.get(1), card3 = privateCards.get(0),
         card4 = privateCards.get(1);
