@@ -8,6 +8,7 @@ public class HumanPlayer extends Player {
   private Card selected;
   public HumanPlayer(Deck deck) {
     super(deck);
+    // Add mouse interaction for human player
     CardListener cardListener = new CardAdapter() {
       public void leftDoubleClicked(Card card) {
         selected = card;

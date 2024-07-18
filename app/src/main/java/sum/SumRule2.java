@@ -11,7 +11,6 @@ import java.util.List;
 public class SumRule2 extends BaseSumRule implements SumRule {
   @Override
   public boolean checkSumEquals13(Player player) {
-//    singletons.PublicCards instance = singletons.PublicCards.getInstance();
     boolean ans = false;
     List<Card> publicCards = PlayingArea.getPublicCards();
     List<Card> privateCards = player.getCurrentHand().getCardList();

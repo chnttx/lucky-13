@@ -16,7 +16,7 @@ public class PlayerFactory {
     return instance;
   }
 
-  // Method to create players
+  // Method to create players based on type
   public Player createPlayer(String type, Deck deck) {
     Player player;
 

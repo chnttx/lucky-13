@@ -17,6 +17,7 @@ public class CleverPlayer extends Player {
   }
   @Override
   public Card discard() {
+    // Get all visible cards (public cards, cards in hand, and cards discarded)
     List<Card> cardsInHand = getCurrentHand().getCardList(),
         publicCards = PlayingArea.getPublicCards(), cardsPlayed = DiscardPile.getCardsPlayed();
 
@@ -30,14 +31,14 @@ public class CleverPlayer extends Player {
         hashMap.put(possibleValue, hashMap.getOrDefault(possibleValue, 0) + 4);
       }
     }
-//    System.out.println(hashMap);
     for (Card card: allCardsVisible) {
       Rank rank = (Rank) card.getRank();
       for (int possibleValue : rank.getPossibleSumValues()) {
         hashMap.put(possibleValue, hashMap.getOrDefault(possibleValue, 0) - 1);
       }
     }
-//    System.out.println(hashMap);
+
+    // Find card with least likelihood of summing up to 13
     Card toDiscard = null;
     int minScore = Integer.MAX_VALUE;
     for (Card card: cardsInHand) {
@@ -46,7 +47,6 @@ public class CleverPlayer extends Player {
       for (int possibleValue: rank.getPossibleSumValues()) {
         currentScore += hashMap.getOrDefault(13 - possibleValue, 0);
       }
-//      System.out.println("Card: " + card.toString() + ", currentScore: " + currentScore);
 
       if (currentScore < minScore) {
         minScore = currentScore;

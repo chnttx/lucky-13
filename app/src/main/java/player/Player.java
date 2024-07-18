@@ -6,8 +6,8 @@ import ch.aplu.jcardgame.*;
 import ch.aplu.jgamegrid.*;
 import enums.*;
 import singletons.*;
-//import singletons.DiscardPile.*;
 
+/* Base class for player */
 public class Player {
     protected Hand currentHand;
     private Queue<String> autoMovements;
@@ -20,7 +20,6 @@ public class Player {
     }
 
     public static final int seed = 30008;
-//    public static final long seed = System.currentTimeMillis() / 1000L;
     static final Random random = new Random(seed);
 
     // Common method to draw a card from the deck
@@ -31,7 +30,11 @@ public class Player {
         currentHand.insert(dealt, true);
     }
 
+    /* Remove a card from current hand and into the discard pile.
+    * Which card is discarded depends on player type */
     public Card discard() { return null; }
+
+    /* Add card to current player's hand*/
     public void addCard(Card card, boolean doDraw) {
         currentHand.insert(card, doDraw);
     }
@@ -43,6 +46,7 @@ public class Player {
     public boolean getCanSumTo13() {
         return canSumTo13;
     }
+    /* Get random card from card list*/
     protected Card randomCard(ArrayList<Card> list) {
         int x = random.nextInt(list.size());
         return list.get(x);
@@ -54,6 +58,7 @@ public class Player {
     public void addToQueue(String[] autoMovement) {
         autoMovements = new LinkedList<>(Arrays.asList(autoMovement));
     }
+    /* Main method for handling player behaviour at each turn */
     public void playTurn(boolean isAuto, Hand pack, int thinkingTime, int delayTime) {
         Card toDiscard;
         if (isAuto && !autoMovements.isEmpty()) {
@@ -130,6 +135,7 @@ public class Player {
         return null;
     }
 
+    /* Set status for GUI text */
     public String getStatusString(int playerIdx) {
         return "Player " + playerIdx + " thinking...";
     }
@@ -140,5 +146,6 @@ public class Player {
 
     public List<List<Card>> getAllCombinationWithSum13() { return allCombinationWithSum13; }
 
+    /* Method to check if a card is a private card or public card for scoring*/
     public boolean isCardInHand(Card card) { return currentHand.contains(card);}
 }

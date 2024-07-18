@@ -48,13 +48,6 @@ public class LuckyThirdteen extends CardGame {
         renderManager.renderHands(players);
     }
 
-
-    // return random Enum value
-    public static <T extends Enum<?>> T randomEnum(Class<T> clazz) {
-        int x = random.nextInt(clazz.getEnumConstants().length);
-        return clazz.getEnumConstants()[x];
-    }
-
     // return random Card from ArrayList
     public static Card randomCard(ArrayList<Card> list) {
         int x = random.nextInt(list.size());
@@ -101,7 +94,7 @@ public class LuckyThirdteen extends CardGame {
         return null;
     }
 
-    // Create players with their initial hand
+    /* Create players */
     private void createPlayers() {
         PlayerFactory playerFactory = PlayerFactory.getInstance();
         for (int i = 0; i < nbPlayers; i++) {
@@ -110,6 +103,7 @@ public class LuckyThirdteen extends CardGame {
         }
     }
 
+    /* Dealing out initial cards to players and playingArea */
     private void dealingOut(Player[] players) {
         pack = deck.toHand(false);
         String initialShareKey = "shared.initialcards";
@@ -127,7 +121,7 @@ public class LuckyThirdteen extends CardGame {
                 }
             }
         }
-        int cardsToShare = 2 - PlayingArea.getPublicCards().size();
+        int cardsToShare = nbFaceUpCards - PlayingArea.getPublicCards().size();
 
         // If shared cards is not in properties, randomly draw 2 cards from the pile to use as our public cards
         for (int j = 0; j < cardsToShare; j++) {
@@ -154,7 +148,7 @@ public class LuckyThirdteen extends CardGame {
                 }
             }
 
-            int cardsDealtRandom = 2 - players[i].getCardCount();
+            int cardsDealtRandom = nbStartCards - players[i].getCardCount();
             for (int j = 0; j < cardsDealtRandom; j++) {
                 if (pack.isEmpty()) return;
                 Card dealt = randomCard(pack.getCardList());
@@ -164,6 +158,7 @@ public class LuckyThirdteen extends CardGame {
         }
     }
 
+    /* Logging methods */
     private void addCardPlayedToLog(int player, List<Card> cards) {
         if (cards.size() < 2) {
             return;
@@ -204,7 +199,9 @@ public class LuckyThirdteen extends CardGame {
         logResult.append("\n");
         logResult.append("Winners:" + String.join(", ", winners.stream().map(String::valueOf).collect(Collectors.toList())));
     }
-    private void play() {
+
+    /* Handle game flow */
+    private List<Integer> play() {
         renderManager.renderScore(players);
         delay(delayTime);
         for (int i = 1; i <= 4; i++) {
@@ -218,11 +215,14 @@ public class LuckyThirdteen extends CardGame {
             addEndOfRoundToLog();
             delay(delayTime);
         }
-        calculateScore(players);
+        List<Integer> winners = calculateScore(players);
         renderManager.renderScore(players);
+        return winners;
     }
 
-    public void calculateScore(Player[] players) {
+    /* Choose appropriate scoring strategy based on number of players with 13 sum
+    * and apply scoring strategy to assign scores and find winners */
+    public List<Integer> calculateScore(Player[] players) {
          int numberOfPlayersWithSum13 = 0;
          for (Player player: players) {
              numberOfPlayersWithSum13 += (sumRuleComposite.checkSumEquals13(player)) ? 1 : 0;
@@ -230,8 +230,10 @@ public class LuckyThirdteen extends CardGame {
          ScoreStrategyFactory scoreStrategyFactory = ScoreStrategyFactory.getInstance();
          ScoreStrategy scoreStrategy = scoreStrategyFactory.getScoreStrategy(numberOfPlayersWithSum13);
          scoreStrategy.applyScore(players);
+         return scoreStrategy.findWinners(players);
     }
 
+    /* Set up auto movements for each player */
     private void setupAutoMovements(int playerIdx) {
         String playerAutoMovement = properties.getProperty("players." + playerIdx + ".cardsPlayed");
         if (playerAutoMovement != null) {
@@ -239,6 +241,8 @@ public class LuckyThirdteen extends CardGame {
             players[playerIdx].addToQueue(autoMovements);
         }
     }
+
+    /* Main method for running our game */
     public String runApp() {
         setTitle("LuckyThirteen (V" + version + ") Constructed for UofM SWEN30006 with JGameGrid (www.aplu.ch)");
         setStatusText("Initializing...");
@@ -246,12 +250,8 @@ public class LuckyThirdteen extends CardGame {
         for (int i = 0; i < nbPlayers; i++) renderManager.renderInitialScore(i, players);
         for (int i = 0; i < nbPlayers; i++) setupAutoMovements(i);
         initGame();
-        play();
+        List<Integer> winners = play();
 
-        int maxScore = 0;
-        for (int i = 0; i < nbPlayers; i++) if (players[i].getScore() > maxScore) maxScore = players[i].getScore();
-        List<Integer> winners = new ArrayList<>();
-        for (int i = 0; i < nbPlayers; i++) if (players[i].getScore() == maxScore) winners.add(i);
         String winText;
         if (winners.size() == 1) {
             winText = "Game over. Winner is player: " +
@@ -267,6 +267,7 @@ public class LuckyThirdteen extends CardGame {
         return logResult.toString();
 
     }
+
 
     public LuckyThirdteen(Properties properties) {
         super(700, 700, 30);

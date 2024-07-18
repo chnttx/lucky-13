@@ -2,12 +2,10 @@ package sum;
 
 import ch.aplu.jcardgame.*;
 import enums.Rank;
-
-//import java.util.*;
-
 public abstract class BaseSumRule implements SumRule {
   protected final int THIRTEEN_GOAL = 13;
 
+  /* Check if 2 cards can sum to 13 */
   protected boolean isThirteenCards(Card card1, Card card2) {
     Rank rank1 = (Rank) card1.getRank();
     Rank rank2 = (Rank) card2.getRank();

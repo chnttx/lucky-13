@@ -5,6 +5,8 @@ import enums.Rank;
 import player.Player;
 import enums.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Multi13Strategy implements ScoreStrategy {
@@ -15,6 +17,15 @@ public class Multi13Strategy implements ScoreStrategy {
         player.setScore(calculateScore(player));
       }
     }
+  }
+  public List<Integer> findWinners(Player[] players) {
+    List<Integer> ans = new ArrayList<>();
+    int maxScore = 0;
+    for (Player player: players) maxScore = Math.max(player.getScore(), maxScore);
+    for (int i = 0; i < players.length; i++) {
+      if (players[i].getScore() == maxScore) ans.add(i);
+    }
+    return ans;
   }
   private int calculateScore(Player player) {
     int ans = 0;

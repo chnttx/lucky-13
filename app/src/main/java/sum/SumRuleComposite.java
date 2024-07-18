@@ -12,6 +12,8 @@ public class SumRuleComposite implements SumRule {
     sumRules.add(new SumRule2());
     sumRules.add(new SumRule3());
   }
+
+  /* Check if a player can sum to 13 under any summation rules */
   @Override
   public boolean checkSumEquals13(Player player){
     boolean ans = false;

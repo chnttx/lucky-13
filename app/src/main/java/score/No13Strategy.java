@@ -6,13 +6,25 @@ import enums.Suit;
 import player.Player;
 import score.ScoreStrategy;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+/* No player has a sum of 13 */
 public class No13Strategy implements ScoreStrategy {
   public void applyScore(Player[] players) {
     for (Player player: players) {
       player.setScore(calculateScoreForPlayer(player));
     }
+  }
+  public List<Integer> findWinners(Player[] players) {
+    List<Integer> ans = new ArrayList<>();
+    int maxScore = 0;
+    for (Player player: players) maxScore = Math.max(player.getScore(), maxScore);
+    for (int i = 0; i < players.length; i++) {
+      if (players[i].getScore() == maxScore) ans.add(i);
+    }
+    return ans;
   }
   private int calculateScoreForPlayer(Player player) {
     int ans = 0;
@@ -28,8 +40,4 @@ public class No13Strategy implements ScoreStrategy {
 
     return rank.getScoreCardValue() * suit.getMultiplicationFactor();
   }
-//  private int getScorePublicCard(Card card) {
-//    enums.Rank rank = (enums.Rank) card.getRank();
-//    return rank.getScoreCardValue() * enums.Suit.PUBLIC_CARD_MULTIPLICATION_FACTOR;
-//  }
 }
